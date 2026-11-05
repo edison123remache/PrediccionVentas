@@ -48,3 +48,7 @@ Usa **Cambiar perfil** para explorar como administradora o trabajador. No son cu
 La [documentación empresarial](docs/enterprise.md) describe permisos, rutas, contratos FastAPI y el flujo previsto para Excel y CSV. No hay procesamiento de archivos ni backend conectado todavía.
 
 El modo predeterminado es `demo`; `.env.example` documenta `APP_MODE`. Cualquier otro valor bloquea el acceso conectado hasta que se implemente. Para comprobar este comportamiento, ejecuta `npm run test:unavailable` después de `npm run test:e2e`, no en paralelo.
+
+## Legibilidad y accesibilidad visual
+
+La [auditoría visual](docs/accessibility.md) documenta la escala tipográfica central, los contrastes, los controles y las comprobaciones de reflujo y texto ampliado. Los estilos se mantienen en `src/lib/styles/typography.css` y se comparten con los gráficos.

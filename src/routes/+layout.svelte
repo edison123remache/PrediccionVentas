@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import '#lib/styles/typography.css';
 	import favicon from '#lib/assets/favicon.svg';
 	import type { LayoutProps } from './$types';
 	let { children }: LayoutProps = $props();

@@ -1,0 +1,401 @@
+/* Escala única. rem respeta las preferencias de tamaño del navegador. */
+:root {
+	--text-caption: 0.8125rem; /* 13 px */
+	--text-secondary: 0.875rem; /* 14 px */
+	--text-control: 0.9375rem; /* 15 px */
+	--text-body: 1rem; /* 16 px */
+	--text-subheading: 1.125rem; /* 18 px */
+	--text-section: 1.25rem; /* 20 px */
+	--text-title: clamp(1.75rem, 1.5rem + 1vw, 2.125rem); /* 28–34 px */
+	--text-indicator: clamp(1.875rem, 1.75rem + 0.6vw, 2.375rem); /* 30–38 px */
+	--weight-normal: 400;
+	--weight-medium: 500;
+	--weight-semibold: 600;
+	--weight-bold: 700;
+	--leading-title: 1.25;
+	--leading-compact: 1.45;
+	--leading-body: 1.65;
+	--leading-relaxed: 1.75;
+	--text-main: #30262b;
+	--text-muted: #65525e;
+	--text-brand: #9f2434;
+	--text-inverse: #ffffff;
+	--control-border: #8c7b84;
+	font-size: 100%;
+	color: var(--text-main);
+	line-height: var(--leading-body);
+}
+body {
+	font-size: var(--text-body);
+	font-weight: var(--weight-normal);
+}
+h1,
+.page-heading h1,
+.phase-state h1,
+.profile-page h1 {
+	font-size: var(--text-title);
+	font-weight: var(--weight-bold);
+	line-height: var(--leading-title);
+	letter-spacing: -0.025em;
+	overflow-wrap: anywhere;
+}
+h2,
+.panel-heading h2,
+.summary-panel h2,
+.assistant-card h2,
+.profile-option h2,
+.phase-state h2 {
+	font-size: var(--text-section);
+	font-weight: var(--weight-semibold);
+	line-height: var(--leading-compact);
+	letter-spacing: -0.015em;
+}
+h3,
+.import-roadmap h3 {
+	font-size: var(--text-subheading);
+	line-height: var(--leading-compact);
+}
+p,
+li {
+	overflow-wrap: break-word;
+}
+strong {
+	font-weight: var(--weight-semibold);
+}
+.profile-intro,
+.profile-option p,
+.profile-option ul,
+.phase-state p,
+.information-grid p,
+.worker-welcome > p,
+.import-roadmap ol,
+.summary-panel > p {
+	font-size: var(--text-body);
+	color: var(--text-muted);
+	line-height: var(--leading-relaxed);
+}
+.muted,
+.panel-heading .muted,
+.page-heading .muted,
+.metric .muted,
+.summary-note,
+.summary-note p,
+.assistant-card p,
+.assistant-info,
+.chart-overview .muted,
+.chart-average,
+.reading-label,
+.month-label,
+.forecast-switch,
+.chart-legend,
+.comparison-bars,
+.comparison-bars strong,
+.data-details,
+table,
+.worker-link small,
+.current-profile small {
+	font-size: var(--text-secondary);
+	color: var(--text-muted);
+	line-height: var(--leading-body);
+}
+.page-heading .muted {
+	font-size: var(--text-body);
+}
+.eyebrow,
+.page-heading .eyebrow,
+.metric .eyebrow,
+.panel-heading .eyebrow,
+.summary-heading .eyebrow,
+.assistant-card .eyebrow,
+.profile-page > .eyebrow,
+.nav-label,
+.brand-subtitle {
+	font-size: var(--text-caption);
+	color: var(--text-muted);
+	font-weight: var(--weight-semibold);
+	line-height: var(--leading-compact);
+	letter-spacing: 0.07em;
+}
+.metric .eyebrow {
+	font-size: var(--text-secondary);
+	letter-spacing: 0.015em;
+}
+.brand-subtitle {
+	letter-spacing: 0.09em;
+}
+.sidebar .nav-link,
+.nav-link,
+.worker-link {
+	font-size: var(--text-control);
+	font-weight: var(--weight-semibold);
+	line-height: var(--leading-compact);
+}
+.sidebar .nav-link > span {
+	font-size: inherit;
+}
+.nav-phase,
+.sidebar-note,
+.sidebar-note p,
+.section-meta,
+.source-note,
+footer,
+.prototype-badge,
+.demo-pill,
+.change-pill,
+.chart-total > span {
+	font-size: var(--text-caption);
+	line-height: var(--leading-body);
+}
+.nav-phase,
+.sidebar-note,
+.sidebar-note p,
+.section-meta,
+.source-note,
+footer,
+.chart-total > span {
+	color: var(--text-muted);
+}
+.nav-phase {
+	font-weight: var(--weight-normal);
+}
+.section-title,
+.current-profile,
+.topbar,
+.topbar-trail,
+.tag,
+.phase-label {
+	font-size: var(--text-secondary);
+	line-height: var(--leading-compact);
+}
+.tag {
+	white-space: normal;
+}
+.metric-value,
+.reading-amount,
+.chart-total {
+	font-size: var(--text-indicator);
+	line-height: var(--leading-title);
+	font-weight: var(--weight-bold);
+	letter-spacing: -0.025em;
+	font-variant-numeric: tabular-nums;
+	overflow-wrap: anywhere;
+}
+.chart-average strong {
+	font-size: var(--text-subheading);
+	color: var(--text-main);
+}
+.demo-banner,
+.demo-banner strong {
+	font-size: var(--text-secondary);
+	line-height: var(--leading-body);
+}
+.demo-banner p {
+	font-size: var(--text-secondary);
+	line-height: var(--leading-body);
+}
+.demo-icon,
+.demo-pill {
+	font-size: var(--text-caption);
+}
+.button,
+.assistant-card .button,
+.profile-option button,
+.refresh-button,
+.menu-toggle,
+.profile-change,
+.secondary-link {
+	font-size: var(--text-control);
+	font-weight: var(--weight-semibold);
+	line-height: var(--leading-compact);
+	min-height: 44px;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+.secondary-link,
+.profile-change {
+	display: inline-flex;
+	align-items: center;
+}
+.segmented button,
+.range-control button {
+	font-size: var(--text-secondary);
+	font-weight: var(--weight-medium);
+	line-height: var(--leading-compact);
+	min-height: 44px;
+	padding: 6px 9px;
+}
+.segmented {
+	flex-wrap: wrap;
+	max-width: 100%;
+	flex-shrink: 1;
+}
+button,
+input,
+select,
+textarea {
+	font-family: inherit;
+}
+select,
+input:not([type='checkbox']):not([type='hidden']),
+textarea {
+	font-size: var(--text-body);
+	line-height: var(--leading-compact);
+	min-height: 44px;
+	border-color: var(--control-border);
+	max-width: 100%;
+}
+.profile-change,
+.refresh-button,
+.menu-toggle {
+	border-color: var(--control-border);
+}
+.forecast-switch {
+	min-height: 44px;
+	gap: 9px;
+}
+.forecast-switch input {
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+}
+.data-details summary {
+	padding-block: 10px;
+	min-height: 44px;
+}
+.table-scroll:focus-visible {
+	outline: 3px solid var(--brand);
+	outline-offset: 4px;
+}
+caption {
+	white-space: normal;
+	font-size: var(--text-secondary);
+	line-height: var(--leading-body);
+}
+.chart-wrap canvas {
+	font-size: var(--text-secondary);
+	font-family: inherit;
+	color: var(--text-muted);
+}
+/* El extremo claro anterior no daba contraste suficiente a etiquetas pequeñas. */
+.metric.accent {
+	background: linear-gradient(120deg, #b81e32, #bd2532);
+}
+.accent .eyebrow,
+.accent .muted {
+	color: var(--text-inverse);
+}
+.metric-symbol {
+	font-size: var(--text-body);
+}
+/* Reflujo: el texto mayor conserva el contenido sin alturas rígidas. */
+.topbar {
+	height: auto;
+	min-height: 72px;
+	flex-wrap: wrap;
+	padding-block: 12px;
+}
+.profile-toolbar,
+.topbar-trail {
+	flex-wrap: wrap;
+}
+.topbar-trail {
+	overflow-wrap: anywhere;
+	min-width: 0;
+}
+.sidebar .nav-link {
+	min-height: 44px;
+}
+.metric {
+	overflow: visible;
+}
+.metric-top,
+.metric-bottom,
+.chart-overview,
+.chart-toolbar {
+	flex-wrap: wrap;
+}
+.metric .muted {
+	max-width: 100%;
+	flex: 1 1 150px;
+}
+.metric-top .eyebrow {
+	flex: 1;
+	min-width: 0;
+}
+.assistant-copy {
+	min-width: 0;
+}
+.comparison-bars > div {
+	grid-template-columns: minmax(0, 1fr) auto;
+}
+.panel-heading > div {
+	min-width: 0;
+}
+.profile-option,
+.phase-state {
+	overflow-wrap: anywhere;
+}
+@media (max-width: 75rem) {
+	.metrics-grid {
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+	}
+	.dashboard-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.summary-panel {
+		display: block;
+	}
+	.month-reading {
+		margin-block: 24px;
+	}
+	.summary-note {
+		margin-top: 23px;
+	}
+	.panel-heading {
+		flex-wrap: wrap;
+	}
+}
+@media (max-width: 48rem) {
+	.topbar {
+		gap: 14px;
+	}
+	.profile-toolbar {
+		flex: 1 1 100%;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	.profile-toolbar .prototype-badge {
+		display: inline-flex;
+	}
+	.sidebar .nav-link {
+		padding-block: 12px;
+	}
+	.metrics-grid,
+	.worker-metrics,
+	.information-grid,
+	.profile-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.profile-option .button,
+	.phase-actions .button {
+		width: 100%;
+	}
+	.chart-overview {
+		align-items: flex-start;
+	}
+	.chart-average {
+		text-align: left;
+	}
+	.chart-wrap {
+		height: 320px;
+	}
+	.chart-legend {
+		justify-content: flex-start;
+	}
+	.assistant-card {
+		overflow: visible;
+	}
+	.assistant-card .button {
+		justify-content: space-between;
+	}
+}

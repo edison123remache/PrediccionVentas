@@ -52,6 +52,12 @@
 		const sales = data.sales;
 		const forecast = showForecast ? data.forecast : null;
 		const reduced = reducedMotion.current;
+		const typography = getComputedStyle(canvas);
+		const chartFont = {
+			family: typography.fontFamily,
+			size: parseFloat(typography.fontSize),
+			weight: 500
+		};
 		const periods = [...sales.map((s) => s.period), ...(forecast ? [forecast.period] : [])];
 		const datasets: ChartConfiguration['data']['datasets'] = [
 			{
@@ -108,6 +114,10 @@
 					plugins: {
 						tooltip: {
 							backgroundColor: '#2a2024',
+							titleFont: chartFont,
+							bodyFont: chartFont,
+							titleColor: '#ffffff',
+							bodyColor: '#ffffff',
 							padding: 14,
 							cornerRadius: 9,
 							callbacks: { label: (item) => `${item.dataset.label}: ${money(Number(item.raw))}` }
@@ -116,13 +126,23 @@
 					scales: {
 						y: {
 							beginAtZero: true,
-							ticks: { callback: (v) => money(Number(v)), maxTicksLimit: 6, color: '#817579' },
+							ticks: {
+								callback: (v) => money(Number(v)),
+								maxTicksLimit: 6,
+								color: typography.color,
+								font: chartFont
+							},
 							grid: { color: '#f0eaeb' },
 							border: { display: false }
 						},
 						x: {
 							grid: { display: false },
-							ticks: { color: '#817579', maxRotation: 45 },
+							ticks: {
+								color: typography.color,
+								font: chartFont,
+								maxRotation: 45,
+								maxTicksLimit: canvas.clientWidth < 500 ? 5 : 8
+							},
 							border: { display: false }
 						}
 					}
@@ -158,7 +178,13 @@
 </div>
 <details class="data-details">
 	<summary>Consultar valores en tabla</summary>
-	<div class="table-scroll">
+	<!-- svelte-ignore a11y_no_noninteractive_tabindex (La región desplazable necesita foco para permitir desplazamiento por teclado.) -->
+	<div
+		class="table-scroll"
+		role="region"
+		tabindex="0"
+		aria-label="Tabla de ingresos mensuales, desplazable horizontalmente"
+	>
 		<table>
 			<caption>Ingresos mensuales demostrativos · vista seleccionada</caption><thead
 				><tr><th scope="col">Período</th><th scope="col">Tipo</th><th scope="col">Ingresos</th></tr

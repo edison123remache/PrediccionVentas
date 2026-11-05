@@ -18,6 +18,7 @@
 		"test:unavailable": "playwright test --config=playwright.unavailable.config.ts"
 	},
 	"devDependencies": {
+		"@axe-core/playwright": "^4.14.0",
 		"@playwright/test": "^1.64.1",
 		"@sveltejs/adapter-auto": "^8.0.0",
 		"@sveltejs/kit": "^3.0.0",
