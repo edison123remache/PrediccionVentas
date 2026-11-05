@@ -38,3 +38,5 @@ Pruebas de navegador:
 npx playwright install chromium
 npm run test:e2e
 ```
+
+El dashboard permite explorar rangos de 3, 6 y 12 meses, alternar líneas y barras, mostrar u ocultar la estimación y seleccionar un mes para actualizar el resumen. Incluye transiciones, contadores animados y soporte para movimiento reducido. La identidad visual roja y el logotipo vectorial provisional se basan en la referencia de Mundo Hogar.

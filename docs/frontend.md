@@ -4,20 +4,20 @@
 
 Layout adaptable, tres tarjetas, gráfico interactivo con tooltip y leyenda, tabla equivalente, resumen calculado y acceso informativo al asistente pendiente. Las secciones futuras muestran «Próximamente» sin enlaces vacíos. No hay autenticación, backend ni modelo conectado.
 
-Todos los valores y fechas son demostrativos. Julio–diciembre de 2025 y enero de 2026 se utilizan solo para probar la interfaz; no son evidencia para la tesis ni registros de Mundo Hogar.
+Todos los valores y fechas son demostrativos. Enero–diciembre de 2025 y enero de 2026 se utilizan solo para probar la interfaz; no son evidencia para la tesis ni registros de Mundo Hogar.
 
 ## Componentes y servicios
 
 - `AppShell`: menú lateral, menú móvil, cabecera, pie y enlace para saltar al contenido.
-- `MetricCard`: etiqueta, valor, detalle y variante destacada.
+- `MetricCard`: importe numérico animado con Tween, etiqueta, detalle, minigráfico de ventas y variante destacada. El valor final está disponible a lectores de pantalla sin anunciar cada cuadro de la animación.
 - `DataState`: carga, error, ausencia de datos y callback de reintento.
-- `SalesChart`: Chart.js con dos series diferenciadas por color y trazo, tooltip, leyenda interactiva y tabla HTML. Destruye el gráfico al desmontarse. Sin animaciones.
+- `SalesChart`: Chart.js con dos series diferenciadas por color y trazo, tooltip, controles de líneas/barras, estimación visible/oculta y tabla HTML sincronizada. Destruye el gráfico al desmontarse; anima las actualizaciones salvo preferencia de movimiento reducido.
 - `types/dashboard.ts`: contratos `MonthlySale`, `SalesForecast`, `DatasetMetadata`, `DashboardData` y `SalesService`.
 - `utils/format.ts`: USD, fechas en español y UTC, variación porcentual y meses consecutivos.
 - `demo/dashboard.ts`: conjunto de ejemplo.
 - `services/sales.ts`: implementación demostrativa de `SalesService`, separada de la página.
 
-La página carga el servicio al montarse y cancela consultas al salir. La variación exige dos meses consecutivos y denominador distinto de cero. La tarjeta de estimación exige el siguiente mes al último registro. Los datos ausentes no se convierten en cero.
+La página carga el servicio al montarse y cancela consultas al salir. El mes seleccionado cambia las tarjetas y la comparación; el rango 3/6/12 meses cambia el total, promedio, gráfico y tabla. Seleccionar un punto del gráfico también actualiza el resumen; el selector de mes ofrece una alternativa de teclado. La variación exige dos meses consecutivos y denominador distinto de cero. La tarjeta de estimación exige el siguiente mes al último registro. Los datos ausentes no se convierten en cero.
 
 ## Integración futura con FastAPI
 
@@ -44,3 +44,11 @@ En esta máquina se usó `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium 
 Se comprueban escritorio (1440 px), móvil (360 px), importes, tabla, menú, detalles del asistente, desbordamiento y errores JavaScript. Los estados de carga, error, reintento y ausencia de datos se prueban sustituyendo el servicio solo en el navegador de prueba, sin interruptores de producción.
 
 Hay etiquetas, foco visible, navegación semántica y tabla alternativa. La validación no equivale a una certificación WCAG ni incluye Safari o Firefox.
+
+## Identidad e interacción
+
+Paleta roja inspirada en la referencia de Mundo Hogar. `Brand.svelte` y el favicon son adaptaciones vectoriales provisionales de esa referencia, no los archivos originales de la marca. Sustituir por el SVG/PNG oficial cuando se disponga del archivo.
+
+Las tarjetas entran de forma escalonada y muestran cifras con Tween; las barras comparativas transicionan con el mes seleccionado. Los gráficos animan los datos al cambiar rango y tipo. Las preferencias de movimiento reducido desactivan estas animaciones. Recargar ejemplo vuelve a consultar el servicio, sin generar cifras aleatorias ni simular una sincronización externa.
+
+Las pruebas también cubren filtros, cambio de tipo, visibilidad de estimación, selector de mes, teclado y movimiento reducido.

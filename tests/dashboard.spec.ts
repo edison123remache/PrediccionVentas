@@ -6,12 +6,12 @@ test('muestra cifras demostrativas, gráfico, tabla y alcance del asistente', as
 	const errors: string[] = [];
 	page.on('pageerror', (error) => errors.push(error.message));
 	await page.goto('/');
-	await expect(page.getByRole('heading', { name: 'Resumen comercial' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Una mirada a tu negocio.' })).toBeVisible();
 	await expect(page.getByText('Estás viendo datos de demostración')).toBeVisible();
 	const metrics = page.locator('.metric');
 	await expect(metrics).toHaveCount(3);
-	await expect(metrics.nth(0)).toContainText('28.100');
-	await expect(metrics.nth(1)).toContainText('26.300');
+	await expect(metrics.nth(0).locator('.metric-value [aria-hidden=true]')).toContainText('28.100');
+	await expect(metrics.nth(1).locator('.metric-value [aria-hidden=true]')).toContainText('26.300');
 	await expect(metrics.nth(2)).toContainText('+14,7 %');
 	await expect(page.locator('canvas')).toBeVisible();
 	await expect
@@ -40,7 +40,11 @@ test('muestra cifras demostrativas, gráfico, tabla y alcance del asistente', as
 		(document.activeElement as HTMLElement)?.blur();
 		window.scrollTo(0, 0);
 	});
-	await page.screenshot({ path: testInfo.outputPath('dashboard.png'), fullPage: true });
+	await page.screenshot({
+		path: testInfo.outputPath('dashboard.png'),
+		fullPage: true,
+		animations: 'disabled'
+	});
 });
 
 test('muestra el estado sin datos sin inventar importes', async ({ page }) => {
@@ -78,4 +82,58 @@ test('mantiene visible la carga mientras la consulta está pendiente', async ({ 
 	await page.goto('/');
 	await expect(page.getByRole('status')).toContainText('Cargando el resumen');
 	await expect(page.locator('.metric')).toHaveCount(0);
+});
+
+test('los filtros, el tipo de gráfico y el mes actualizan los datos', async ({ page }) => {
+	await page.goto('/');
+	await expect(page.locator('.metric').first()).toContainText('28.100');
+	await page.getByRole('button', { name: '3 meses', exact: true }).click();
+	await expect(page.locator('.chart-overview')).toContainText('75.350');
+	await page.getByText('Consultar valores en tabla').click();
+	await expect(page.getByRole('row')).toHaveCount(5);
+	await page.getByRole('button', { name: 'Barras', exact: true }).click();
+	await expect(page.getByRole('button', { name: 'Barras', exact: true })).toHaveAttribute(
+		'aria-pressed',
+		'true'
+	);
+	await page.getByRole('checkbox', { name: 'Mostrar estimación' }).uncheck();
+	await expect(page.getByRole('row')).toHaveCount(4);
+	await expect(page.getByRole('cell', { name: 'Estimación ilustrativa', exact: true })).toHaveCount(
+		0
+	);
+	await page
+		.getByRole('combobox', { name: 'Mes del resumen', exact: true })
+		.selectOption('2025-10');
+	await expect(page.locator('.metric').first()).toContainText('22.750');
+	await expect(page.locator('.month-reading')).toContainText('22.750');
+	await expect(page.locator('.metric').nth(2)).toContainText('+17,3 %');
+	await page.getByRole('button', { name: '12 meses', exact: true }).click();
+	await expect(page.getByRole('row')).toHaveCount(13);
+	await expect(
+		page.getByRole('combobox', { name: 'Mes del resumen', exact: true }).locator('option')
+	).toHaveCount(12);
+	await page.getByRole('button', { name: 'Líneas', exact: true }).click();
+	await page.getByRole('checkbox', { name: 'Mostrar estimación' }).check();
+	await expect(page.getByRole('row')).toHaveCount(14);
+	expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('respeta movimiento reducido y permite explorar con teclado', async ({ page }) => {
+	await page.emulateMedia({ reducedMotion: 'reduce' });
+	await page.goto('/');
+	await expect(page.locator('.metric').first()).toContainText('28.100');
+	expect(
+		await page
+			.locator('.metric')
+			.first()
+			.evaluate((el) => getComputedStyle(el).animationName)
+	).toBe('none');
+	await page.keyboard.press('Tab');
+	await expect(page.getByRole('link', { name: 'Saltar al contenido' })).toBeFocused();
+	await page.keyboard.press('Enter');
+	await expect(page.locator('main')).toBeFocused();
+	await page.getByRole('combobox', { name: 'Mes del resumen', exact: true }).focus();
+	await page.keyboard.press('Home');
+	await page.keyboard.press('Enter');
+	await expect(page.locator('.month-reading')).toContainText('18.200');
 });

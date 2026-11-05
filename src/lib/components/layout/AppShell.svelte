@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import Brand from '#lib/components/ui/Brand.svelte';
 	let { children }: { children: Snippet } = $props();
 	let menuOpen = $state(false);
 	const upcoming = [
@@ -14,11 +15,8 @@
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
 <div class="app-shell">
 	<aside class="sidebar">
-		<a class="brand" href="/" aria-label="Mundo Hogar, inicio"
-			><span class="brand-mark" aria-hidden="true">MH</span><span
-				>Mundo Hogar<small>Asistente comercial</small></span
-			></a
-		>
+		<a class="brand" href="/" aria-label="Mundo Hogar, inicio"><Brand /></a>
+		<p class="brand-subtitle">ASISTENTE COMERCIAL</p>
 		<button
 			class="menu-toggle"
 			aria-expanded={menuOpen}
@@ -41,7 +39,9 @@
 	</aside>
 	<div class="workspace">
 		<header class="topbar">
-			<span>Panel de apoyo comercial</span><span class="prototype-badge">Versión demostrativa</span>
+			<span class="topbar-trail"
+				>Tu espacio de trabajo <span aria-hidden="true">/</span> <strong>Inicio</strong></span
+			><span class="prototype-badge">Versión demostrativa</span>
 		</header>
 		<main id="contenido" tabindex="-1">{@render children()}</main>
 		<footer>Mundo Hogar · Apoyo para tus decisiones comerciales</footer>
