@@ -25,3 +25,16 @@ npm run build
 `npm run preview` permite comprobar la compilación localmente. El adaptador de despliegue se seleccionará cuando se defina el proveedor de alojamiento.
 
 Este proyecto base no requiere claves ni servicios externos.
+
+## Dashboard demostrativo
+
+El primer incremento incluye el layout adaptable y el resumen comercial. Todos los datos son de ejemplo y no representan ventas ni pronósticos reales de Mundo Hogar. Las demás secciones están pendientes.
+
+Consulta [la documentación del frontend](docs/frontend.md) para componentes, contratos e integración futura con FastAPI.
+
+Pruebas de navegador:
+
+```sh
+npx playwright install chromium
+npm run test:e2e
+```
