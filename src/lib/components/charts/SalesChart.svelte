@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { MediaQuery } from 'svelte/reactivity';
+	const reducedMotion = new MediaQuery('(prefers-reduced-motion: reduce)', true);
 	import {
 		Chart,
 		LineController,
@@ -49,7 +51,7 @@
 		if (!mounted) return;
 		const sales = data.sales;
 		const forecast = showForecast ? data.forecast : null;
-		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const reduced = reducedMotion.current;
 		const periods = [...sales.map((s) => s.period), ...(forecast ? [forecast.period] : [])];
 		const datasets: ChartConfiguration['data']['datasets'] = [
 			{

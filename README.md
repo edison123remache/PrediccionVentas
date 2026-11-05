@@ -13,7 +13,7 @@ npm ci
 npm run dev -- --host 0.0.0.0
 ```
 
-La pantalla inicial está en `src/routes/+page.svelte`.
+La pantalla inicial está en `src/routes/(app)/+page.svelte`.
 
 ## Validación
 
@@ -40,3 +40,11 @@ npm run test:e2e
 ```
 
 El dashboard permite explorar rangos de 3, 6 y 12 meses, alternar líneas y barras, mostrar u ocultar la estimación y seleccionar un mes para actualizar el resumen. Incluye transiciones, contadores animados y soporte para movimiento reducido. La identidad visual roja y el logotipo vectorial provisional se basan en la referencia de Mundo Hogar.
+
+## Perfiles de demostración
+
+Usa **Cambiar perfil** para explorar como administradora o trabajador. No son cuentas reales ni un inicio de sesión. El trabajador ve un dashboard simplificado; los módulos futuros explican su estado sin simular cargas o respuestas.
+
+La [documentación empresarial](docs/enterprise.md) describe permisos, rutas, contratos FastAPI y el flujo previsto para Excel y CSV. No hay procesamiento de archivos ni backend conectado todavía.
+
+El modo predeterminado es `demo`; `.env.example` documenta `APP_MODE`. Cualquier otro valor bloquea el acceso conectado hasta que se implemente. Para comprobar este comportamiento, ejecuta `npm run test:unavailable` después de `npm run test:e2e`, no en paralelo.

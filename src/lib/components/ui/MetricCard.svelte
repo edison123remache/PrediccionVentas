@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { Tween } from 'svelte/motion';
+	import { MediaQuery } from 'svelte/reactivity';
+	const reducedMotion = new MediaQuery('(prefers-reduced-motion: reduce)', true);
 	import { cubicOut } from 'svelte/easing';
 	import { money } from '#lib/utils/format.js';
 	let {
@@ -20,7 +22,7 @@
 	const counter = new Tween(0, { duration: 850, easing: cubicOut });
 	$effect(() => {
 		void counter.set(amount ?? 0, {
-			duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 850
+			duration: reducedMotion.current ? 0 : 850
 		});
 	});
 	const format = (n: number) =>

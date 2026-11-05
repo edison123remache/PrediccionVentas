@@ -1,3 +1,4 @@
+import type { Permission } from './access.js';
 export interface MonthlySale {
 	period: string;
 	revenue: number;
@@ -18,5 +19,5 @@ export interface DashboardData {
 	metadata: DatasetMetadata;
 }
 export interface SalesService {
-	getDashboard(signal?: AbortSignal): Promise<DashboardData>;
+	getDashboard(signal?: AbortSignal, permissions?: readonly Permission[]): Promise<DashboardData>;
 }

@@ -1,5 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import type { PageProps } from './$types';
+	import { can } from '#lib/access/policy.js';
+	let { data: pageData }: PageProps = $props();
+	let worker = $derived(pageData.access.user?.role === 'worker');
+	let allowedForecast = $derived(can(pageData.access, 'forecasts:read'));
+
 	import { slide } from 'svelte/transition';
 	import MetricCard from '#lib/components/ui/MetricCard.svelte';
 	import DataState from '#lib/components/ui/DataState.svelte';
@@ -21,7 +27,10 @@
 		const signal = controller.signal;
 		status = 'loading';
 		try {
-			const result = await salesService.getDashboard(signal);
+			const result = await salesService.getDashboard(
+				signal,
+				pageData.access.user?.permissions ?? []
+			);
 			if (signal.aborted) return;
 			data = result;
 			selectedPeriod = result.sales.at(-1)?.period ?? '';
@@ -111,20 +120,22 @@
 			>Actualización del ejemplo: {date(data.metadata.updatedAt)}</span
 		>
 	</div>
-	<div class="metrics-grid">
+	<div class="metrics-grid" class:worker-metrics={worker}>
 		<MetricCard
 			label="Ventas del mes seleccionado"
 			amount={latest.revenue}
 			detail={`${month(latest.period)} · ejemplo`}
 			series={visibleSales.map((s) => s.revenue)}
 		/>
-		<MetricCard
-			label="Estimación del próximo mes"
-			amount={forecast?.revenue ?? null}
-			detail={forecast ? `${month(forecast.period)} · ilustrativa` : 'Sin estimación disponible'}
-			series={lastSale && forecast ? [lastSale.revenue, forecast.revenue] : []}
-			accent
-		/>
+		{#if allowedForecast}
+			<MetricCard
+				label="Estimación del próximo mes"
+				amount={forecast?.revenue ?? null}
+				detail={forecast ? `${month(forecast.period)} · ilustrativa` : 'Sin estimación disponible'}
+				series={lastSale && forecast ? [lastSale.revenue, forecast.revenue] : []}
+				accent
+			/>
+		{/if}
 		<MetricCard
 			label="Variación de ventas"
 			amount={change}
@@ -135,48 +146,70 @@
 			series={visibleSales.map((s) => s.revenue)}
 		/>
 	</div>
-	<div class="dashboard-grid">
-		<section class="panel chart-panel">
-			<div class="panel-heading">
-				<div>
-					<span class="eyebrow">EL PULSO DE TUS VENTAS</span>
-					<h2>Evolución de ingresos</h2>
-					<p class="muted">Selecciona un mes en el gráfico para explorar su resumen.</p>
+	<div class="dashboard-grid" class:worker-dashboard={worker}>
+		{#if !worker}
+			<section class="panel chart-panel">
+				<div class="panel-heading">
+					<div>
+						<span class="eyebrow">EL PULSO DE TUS VENTAS</span>
+						<h2>Evolución de ingresos</h2>
+						<p class="muted">Selecciona un mes en el gráfico para explorar su resumen.</p>
+					</div>
+					<div class="segmented range-control" role="group" aria-label="Período del gráfico">
+						{#each [3, 6, 12] as n}<button aria-pressed={range === n} onclick={() => setRange(n)}
+								>{n} meses</button
+							>{/each}
+					</div>
 				</div>
-				<div class="segmented range-control" role="group" aria-label="Período del gráfico">
-					{#each [3, 6, 12] as n}<button aria-pressed={range === n} onclick={() => setRange(n)}
-							>{n} meses</button
-						>{/each}
+				<div class="chart-overview">
+					<div>
+						<p class="chart-total">{money(periodTotal)}<span>USD</span></p>
+						<p class="muted">Ventas de ejemplo · {visibleSales.length} meses seleccionados</p>
+					</div>
+					<div class="chart-average">
+						<span>Promedio mensual</span><strong>{money(periodAverage)}</strong>
+					</div>
 				</div>
-			</div>
-			<div class="chart-overview">
-				<div>
-					<p class="chart-total">{money(periodTotal)}<span>USD</span></p>
-					<p class="muted">Ventas de ejemplo · {visibleSales.length} meses seleccionados</p>
-				</div>
-				<div class="chart-average">
-					<span>Promedio mensual</span><strong>{money(periodAverage)}</strong>
-				</div>
-			</div>
-			<div class="chart-toolbar">
-				<div class="segmented" role="group" aria-label="Tipo de gráfico">
-					<button aria-pressed={chartMode === 'line'} onclick={() => (chartMode = 'line')}
-						>Líneas</button
-					><button aria-pressed={chartMode === 'bar'} onclick={() => (chartMode = 'bar')}
-						>Barras</button
+				<div class="chart-toolbar">
+					<div class="segmented" role="group" aria-label="Tipo de gráfico">
+						<button aria-pressed={chartMode === 'line'} onclick={() => (chartMode = 'line')}
+							>Líneas</button
+						><button aria-pressed={chartMode === 'bar'} onclick={() => (chartMode = 'bar')}
+							>Barras</button
+						>
+					</div>
+					<label class="forecast-switch"
+						><input type="checkbox" bind:checked={showForecast} />Mostrar estimación</label
 					>
 				</div>
-				<label class="forecast-switch"
-					><input type="checkbox" bind:checked={showForecast} />Mostrar estimación</label
-				>
-			</div>
-			{#if visibleData}<SalesChart
-					data={visibleData}
-					mode={chartMode}
-					{showForecast}
-					onSelect={(p) => (selectedPeriod = p)}
-				/>{/if}
-		</section>
+				{#if visibleData}<SalesChart
+						data={visibleData}
+						mode={chartMode}
+						{showForecast}
+						onSelect={(p) => (selectedPeriod = p)}
+					/>{/if}
+			</section>
+		{:else}
+			<section class="panel worker-welcome">
+				<span class="eyebrow">TU ESPACIO DE CONSULTA</span>
+				<h2>Lo esencial para tu jornada</h2>
+				<p>
+					Este perfil muestra ventas de ejemplo y accesos de consulta. No permite administrar
+					usuarios, importar archivos ni exportar reportes.
+				</p>
+				<div class="worker-links">
+					{#each [{ href: '/ventas', label: 'Consultar ventas', permission: 'sales:read' as const }, { href: '/inventario', label: 'Consultar inventario', permission: 'inventory:read' as const }, { href: '/asistente', label: 'Conocer el asistente', permission: 'chat:use' as const }] as link}{#if can(pageData.access, link.permission)}<a
+								class="worker-link"
+								href={link.href}
+								>{link.label}<span aria-hidden="true">→</span><small>Módulo en preparación</small
+								></a
+							>{/if}{/each}
+				</div>
+				<p class="muted">
+					Las cifras son demostrativas. Estas opciones no representan permisos de una cuenta real.
+				</p>
+			</section>
+		{/if}
 		<section class="panel summary-panel">
 			<div class="summary-heading">
 				<span class="eyebrow">MES A MES</span><span class="summary-icon" aria-hidden="true"
@@ -222,48 +255,52 @@
 					</div>
 				</div>{/if}
 			<div class="summary-note">
-				<strong>Una guía, no una garantía</strong>
+				<strong>{worker ? 'Consulta sin modificar registros' : 'Una guía, no una garantía'}</strong>
 				<p>
-					La estimación es ilustrativa. No hay un modelo conectado ni métricas de precisión
-					disponibles.
+					{worker
+						? 'Este perfil es de solo consulta. Los permisos de una cuenta real deberán verificarse en el backend.'
+						: 'La estimación es ilustrativa. No hay un modelo conectado ni métricas de precisión disponibles.'}
 				</p>
 			</div>
 		</section>
 	</div>
-	<section class="assistant-card">
-		<div class="assistant-orb" aria-hidden="true">
-			<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5"
-				><path d="M16 5l2.8 8.2L27 16l-8.2 2.8L16 27l-2.8-8.2L5 16l8.2-2.8L16 5Z" /></svg
-			>
-		</div>
-		<div class="assistant-copy">
-			<span class="eyebrow">TU PRÓXIMO ALIADO COMERCIAL</span>
-			<h2>Menos dudas. Más claridad.</h2>
-			<p>Un asistente para conversar sobre tus ventas y pronósticos, con palabras sencillas.</p>
-		</div>
-		<button
-			class="button"
-			aria-expanded={showAssistantInfo}
-			aria-controls="assistant-info"
-			onclick={() => (showAssistantInfo = !showAssistantInfo)}
-			>{showAssistantInfo ? 'Ocultar detalles' : 'Conocer el asistente'}<span aria-hidden="true"
-				>→</span
-			></button
-		>{#if showAssistantInfo}<div
-				id="assistant-info"
-				class="assistant-info"
-				role="status"
-				transition:slide={{ duration: reduced ? 0 : 220 }}
-			>
-				<strong>El asistente se desarrollará en un próximo incremento.</strong>
-				<p>
-					Aún no está conectado a un servicio de respuestas. No genera cifras ni predicciones. Aquí
-					podrás consultar tus datos cuando se integre la API.
-				</p>
-			</div>{/if}
-	</section>
+	{#if !worker && can(pageData.access, 'chat:use')}
+		<section class="assistant-card">
+			<div class="assistant-orb" aria-hidden="true">
+				<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5"
+					><path d="M16 5l2.8 8.2L27 16l-8.2 2.8L16 27l-2.8-8.2L5 16l8.2-2.8L16 5Z" /></svg
+				>
+			</div>
+			<div class="assistant-copy">
+				<span class="eyebrow">TU PRÓXIMO ALIADO COMERCIAL</span>
+				<h2>Menos dudas. Más claridad.</h2>
+				<p>Un asistente para conversar sobre tus ventas y pronósticos, con palabras sencillas.</p>
+			</div>
+			<button
+				class="button"
+				aria-expanded={showAssistantInfo}
+				aria-controls="assistant-info"
+				onclick={() => (showAssistantInfo = !showAssistantInfo)}
+				>{showAssistantInfo ? 'Ocultar detalles' : 'Conocer el asistente'}<span aria-hidden="true"
+					>→</span
+				></button
+			>{#if showAssistantInfo}<div
+					id="assistant-info"
+					class="assistant-info"
+					role="status"
+					transition:slide={{ duration: reduced ? 0 : 220 }}
+				>
+					<strong>El asistente se desarrollará en un próximo incremento.</strong>
+					<p>
+						Aún no está conectado a un servicio de respuestas. No genera cifras ni predicciones.
+						Aquí podrás consultar tus datos cuando se integre la API.
+					</p>
+				</div>{/if}
+		</section>
+	{/if}
 	<p class="source-note">
-		Fuente: {data.metadata.source}. Cobertura del ejemplo: enero–diciembre de 2025. Estimación
-		ilustrativa: enero de 2026. Las interacciones solo cambian la visualización de estos datos.
+		Fuente: {data.metadata.source}. Cobertura del ejemplo: enero–diciembre de 2025.
+		{#if allowedForecast}Estimación ilustrativa: enero de 2026.{/if} Las interacciones solo cambian la
+		visualización de estos datos.
 	</p>
 {/if}

@@ -2,7 +2,7 @@
 
 ## Incremento 1
 
-Layout adaptable, tres tarjetas, gráfico interactivo con tooltip y leyenda, tabla equivalente, resumen calculado y acceso informativo al asistente pendiente. Las secciones futuras muestran «Próximamente» sin enlaces vacíos. No hay autenticación, backend ni modelo conectado.
+Layout adaptable, tres tarjetas, gráfico interactivo con tooltip y leyenda, tabla equivalente, resumen calculado y acceso informativo al asistente pendiente. Las secciones futuras muestran «Próximamente» sin enlaces vacíos. No hay autenticación, backend ni modelo conectado. La base empresarial y los perfiles demostrativos se documentan en [enterprise.md](enterprise.md).
 
 Todos los valores y fechas son demostrativos. Enero–diciembre de 2025 y enero de 2026 se utilizan solo para probar la interfaz; no son evidencia para la tesis ni registros de Mundo Hogar.
 
@@ -15,7 +15,7 @@ Todos los valores y fechas son demostrativos. Enero–diciembre de 2025 y enero 
 - `types/dashboard.ts`: contratos `MonthlySale`, `SalesForecast`, `DatasetMetadata`, `DashboardData` y `SalesService`.
 - `utils/format.ts`: USD, fechas en español y UTC, variación porcentual y meses consecutivos.
 - `demo/dashboard.ts`: conjunto de ejemplo.
-- `services/sales.ts`: implementación demostrativa de `SalesService`, separada de la página.
+- `services/sales.ts`: implementación demostrativa de `SalesService`, separada de la página, con filtrado ilustrativo por permisos. El dashboard está ahora en `routes/(app)/+page.svelte`.
 
 La página carga el servicio al montarse y cancela consultas al salir. El mes seleccionado cambia las tarjetas y la comparación; el rango 3/6/12 meses cambia el total, promedio, gráfico y tabla. Seleccionar un punto del gráfico también actualiza el resumen; el selector de mes ofrece una alternativa de teclado. La variación exige dos meses consecutivos y denominador distinto de cero. La tarjeta de estimación exige el siguiente mes al último registro. Los datos ausentes no se convierten en cero.
 
